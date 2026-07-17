@@ -4,929 +4,879 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>归去来兮序一体化平台</title>
-    <style>
-           * { margin: 0; padding: 0; box-sizing: border-box; }
-           body { 
-             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-             background: #1a1a1a; 
-             color: #fff;
-             overflow-x: hidden;
-           }
-   
-           #content { 
-             padding-top: 50px; 
-             padding-bottom: 60px; 
-             height: 100%; 
-             overflow-y: auto;
-             overflow-x: hidden;
-           }
-   
-           .page { 
-             padding: 15px; 
-             width: 100%; 
-             max-width: 100%; 
-           }
-   
-           /* 引导页 */
-           #guide-page { 
-               position: fixed; 
-               top: 0; 
-               left: 0; 
-               width: 100%; 
-               height: 100%; 
-               background: #1a1a1a; 
-               display: flex; 
-               flex-direction: column; 
-               justify-content: center; 
-               align-items: center; 
-               z-index: 9999; 
-               transition: opacity 0.5s; 
-           }
-           .guide-content {
-               text-align: center;
-               padding: 40px 20px;
-               max-width: 400px;
-               width: 100%;
-           }
-           .guide-title {
-               font-size: 36px;
-               font-weight: bold;
-               color: #FFD700;
-               margin-bottom: 10px;
-               text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-           }
-           .guide-subtitle {
-               font-size: 16px;
-               color: #aaa;
-               margin-bottom: 50px;
-           }
-           .guide-card {
-               background: #2a2a2a;
-               border: 1px solid #444;
-               border-radius: 16px;
-               padding: 30px 20px;
-               margin-bottom: 40px;
-           }
-           .guide-item {
-               margin-bottom: 25px;
-           }
-           .guide-item:last-child {
-               margin-bottom: 0;
-           }
-           .guide-icon {
-               font-size: 32px;
-               margin-bottom: 8px;
-           }
-           .guide-text {
-               font-size: 18px;
-               font-weight: bold;
-               color: #fff;
-               margin-bottom: 4px;
-           }
-           .guide-desc {
-               font-size: 14px;
-               color: #aaa;
-           }
-           .enter-btn {
-               width: 100%;
-               padding: 16px;
-               background: #FFD700;
-               color: #1a1a1a;
-               border: none;
-               border-radius: 12px;
-               font-size: 18px;
-               font-weight: bold;
-               cursor: pointer;
-               box-shadow: 0 4px 15px rgba(255,215,0,0.2);
-               transition: transform 0.2s, box-shadow 0.2s;
-           }
-           .enter-btn:active {
-               transform: scale(0.98);
-               box-shadow: 0 2px 8px rgba(255,215,0,0.2);
-           }
-   
-           /* 主界面 */
-           #main-app { display: none; width: 100%; height: 100vh; position: relative; }
-           #header { position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; z-index: 100; border-bottom: 1px solid #444; }
-           #header-title { font-size: 18px; font-weight: bold; }
-           #back-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; display: none; }
-   
-           .info-card { background: #2a2a2a; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-           .card-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #FFD700; }
-           .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #444; }
-           .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-   
-           /* 兑换商店排版 */
-           #shop-items .info-row {
-             display: flex;
-             align-items: flex-start;
-             justify-content: flex-start;
-             gap: 10px;
-             padding: 8px 0;
-             border-bottom: 1px solid #3a3a3a;
-           }
-           #shop-items .label {
-             min-width: 120px;
-             color: #FFD700;
-             font-weight: bold;
-           }
-           #shop-items .value {
-             text-align: left;
-             line-height: 1.4;
-           }
-   
-           .label { color: #aaa; }
-           .value { color: #fff; font-weight: 500; }
-   
-           /* 导航 */
-           #nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: #2a2a2a; display: flex; border-top: 1px solid #444; z-index: 100; }
-           .nav-item { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 12px; color: #aaa; cursor: pointer; transition: all 0.2s; }
-           .nav-item.active { color: #FFD700; background: #333; }
-   
-           /* 游戏理解布局 */
-           .game-menu {
-             display: flex;
-             gap: 0; 
-             width: 100%;
-             height: calc(100vh - 120px); 
-           }
-           .game-menu > .info-card:first-child {
-             width: 72px;
-             background: #1f1f1f;
-             border-radius: 8px 0 0 8px;
-             margin: 0;
-             padding: 0;
-             height: 100%;
-             overflow-y: auto;
-             box-shadow: inset -2px 0 10px rgba(0,0,0,0.3);
-           }
-           .game-menu > .info-card:first-child .card-title {
-             padding: 15px 5px;
-             margin: 0;
-             background: linear-gradient(135deg, #333 0%, #222 100%);
-             border-bottom: 1px solid #444;
-             text-align: center;
-             font-size: 14px;
-           }
-           .main-btn {
-             width: 100%;
-             padding: 15px 5px;
-             background: linear-gradient(180deg, #4a6a88 0%, #3b5875 100%);
-             color: #fff;
-             border: none;
-             border-bottom: 1px solid #2d455c;
-             font-size: 14px;
-             text-align: center;
-             cursor: pointer;
-           }
-           .sub-menu {
-             display: none;
-             background: #283848;
-           }
-           .sub-btn {
-             width: 100%;
-             padding: 12px 5px;
-             background: #3a4a5a;
-             color: #fff;
-             border: none;
-             border-bottom: 1px solid #1f2f3f;
-             font-size: 12px;
-             text-align: center;
-             cursor: pointer;
-           }
-           #attr-content {
-             flex: 1; 
-             padding: 15px;
-             background: #2a2a2a;
-             border-radius: 0 8px 8px 0;
-             height: 100%;
-             overflow-y: auto;
-           }
-   
-           /* 加载动画 */
-           .spin {
-             display: inline-block;
-             width: 14px;
-             height: 14px;
-             border: 2px solid #FFD700;
-             border-top-color: transparent;
-             border-radius: 50%;
-             animation: spin 0.8s linear infinite;
-             margin-right: 6px;
-           }
-           @keyframes spin {
-             to { transform: rotate(360deg); }
-           }
-   
-           /* 状态提示 */
-           .status-tip {
-             padding: 10px;
-             border-radius: 8px;
-             margin: 10px 0;
-             font-size: 14px;
-           }
-           .status-loading {
-             background: #333;
-             color: #FFD700;
-           }
-           .status-error {
-             background: #442222;
-             color: #ff6b6b;
-           }
-   
-           /* ID弹窗 */
-           #id-input-modal {
-             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-             background: rgba(0,0,0,0.8); z-index: 99999;
-             display: none; justify-content: center; align-items: center;
-           }
-           .modal-content {
-             background: #2a2a2a; border-radius: 12px; padding: 25px;
-             width: 90%; max-width: 350px; border: 1px solid #444;
-           }
-           .modal-title {
-             font-size: 18px; font-weight: bold; color: #FFD700;
-             margin-bottom: 15px; text-align: center;
-           }
-           .modal-input {
-             width: 100%; padding: 12px; border-radius: 8px;
-             border: 1px solid #444; background: #1a1a1a; color: #fff;
-             font-size: 16px; margin-bottom: 15px;
-           }
-           .modal-buttons {
-             display: flex; gap: 10px;
-           }
-           .modal-btn {
-             flex: 1; padding: 12px; border-radius: 8px;
-             border: none; font-size: 16px; font-weight: bold;
-             cursor: pointer;
-           }
-           .btn-confirm {
-             background: #FFD700; color: #1a1a1a;
-           }
-           .btn-cancel {
-             background: #444; color: #fff;
-           }
-       </style>
-   </head>
-   <body>
- <!-- ID输入弹窗 -->
- <div id="id-input-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0.8);z-index:99999;justify-content:center;align-items:center;">
-   <div class="modal-content" style="background:#2a2a2a;border-radius:12px;padding:25px;width:90%;max-width:350px;border:1px solid #444;">
-     <div class="modal-title" style="font-size:18px;font-weight:bold;color:#FFD700;margin-bottom:15px;text-align:center;">请输入游戏ID <br>（过长或特殊id会简化处理，<br>请询问市长）</div>
-     <input type="text" id="game-id-input" autocomplete="off" class="modal-input" placeholder="输入姓名首字即可筛选">
-     <!-- 姓名下拉联想框 -->
-     <div id="name-suggest" style="max-height:160px;overflow-y:auto;border:1px solid #444;background:#222;display:none;margin:-10px 0 10px 0;"></div>
-     <div class="modal-buttons" style="display:flex;gap:10px;">
-       <button class="modal-btn btn-cancel" onclick="closeIdModal()">取消</button>
-       <button class="modal-btn btn-confirm" onclick="confirmIdInput()">确定</button>
-     </div>
-   </div>
- </div>
-   
-   <!-- 引导页 -->
-   <div id="guide-page">
-     <div class="guide-content">
-       <div class="guide-title">归去来兮序e通办</div>
-       <div class="guide-subtitle">—— 六年走来，你我同行 ——</div>
-       <div class="guide-card">
-         <div class="guide-item">
-           <div class="guide-icon">📌</div>
-           <div class="guide-text">轻量化设计</div>
-           <div class="guide-desc">无需注册、登录，直接查看内容，提交报名</div>
-         </div>
-         <div class="guide-item">
-           <div class="guide-icon">📢</div>
-           <div class="guide-text">暂没想好 —— 活动报名</div>
-           <div class="guide-desc">实时查看营地最新动态·参与营地精彩活动</div>
-         </div>
-         <div class="guide-item">
-           <div class="guide-icon">📊</div>
-           <div class="guide-text">明日宝典</div>
-           <div class="guide-desc">装备/专研/配件/纳米塑材转换数据查询</div>
-         </div>
-       </div>
-       <button class="enter-btn">进入营地</button>
-     </div>
-   </div>
-   
-   <!-- 主应用 -->
-   <div id="main-app">
-     <div id="header">
-       <button id="back-btn" onclick="goBack()">← 返回</button>
-       <div id="header-title">归去来兮序</div>
-     </div>
-   
-     <div id="content">
-      
-       <!-- 兑换商店 -->
-       <div id="page1" class="page" style="display:none;">
-         <div id="shop-status" class="status-tip status-loading">
-           <span class="spin"></span>正在加载商品数据...
-         </div>
-         <div id="shop-info" style="display:none;">
-           <div class="info-card">
-             <div class="card-title">我的金条</div>
-             <div class="info-row">
-               <span class="label">可用金条</span>
-               <span class="value" id="shop-gold" style="color:#FFD700;font-weight:bold;"></span>
-             </div>
-           </div>
-           <div class="info-card">
-             <div class="card-title">可兑换商品</div>
-             <div id="shop-items"></div>
-           </div>
-         </div>
-         <button id="retry-shop-btn" style="display:none;margin-top:20px;padding:12px;background:#FFD700;color:#000;border:none;border-radius:8px;width:100%;" onclick="loadShop()">
-           重新加载商品
-         </button>
-       </div>
-   
-       <!-- 问题反馈 -->
-       <div id="page2" class="page" style="display:none;">
-         <iframe src="https://gcngrq2jx611.feishu.cn/share/base/form/shrcn9n1q5oC8HrP0TeGcXdXSHd" 
-                 style="width:100%;height:100vh;border:none;filter: invert(90%) hue-rotate(180deg);background-color:#1a1a1a;"></iframe>
-       </div>
-   
-       <!-- 我的信息 -->
-       <div id="page3" class="page" style="display:none;">
-         <div id="user-status" class="status-tip status-loading">
-           <span class="spin"></span>请点击切换认证...
-         </div>
-   
-         <div id="user-info" style="display:none;">
-           <div class="info-card">
-             <div class="card-title">我的信息</div>
-             <div class="info-row"><span class="label">游戏ID</span><span class="value" id="user-id"></span></div>
-             <div class="info-row"><span class="label">入营时间</span><span class="value" id="join-time"></span></div>
-             <div class="info-row"><span class="label">公共职务</span><span class="value" id="public-identity"></span></div>
-             <div class="info-row"><span class="label">公职工龄</span><span class="value" id="work-age"></span></div>
-             <div class="info-row"><span class="label">参与次数</span><span class="value" id="join-count"></span></div>
-             <div class="info-row"><span class="label">可兑换金条</span><span class="value" id="gold-balance"></span></div>
-             <div class="info-row"><span class="label">备注</span><span class="value" id="remark"></span></div>
-             <div class="info-row"><span class="label">应捐科技点数量</span><span class="value" id="target-tech"></span></div>
-             <div class="info-row"><span class="label">已捐科技点数量</span><span class="value" id="real-tech"></span></div>
-           </div>
-           <div class="info-card">
-             <div class="card-title">核销记录</div>
-             <div id="writeoff-list"></div>
-           </div>
-         </div>
-   
-         <button id="retry-user-btn" style="display:none;margin-top:20px;padding:12px;background:#FFD700;color:#000;border:none;border-radius:8px;width:100%;" onclick="loadUserInfoReal()">
-           重新加载我的信息
-         </button>
-   
-         <button id="switch-account-btn-local" onclick="reInputUserId()" 
-                 style="margin-top:15px;padding:10px;background:#ff6b6b;color:white;border:none;border-radius:8px;width:100%;">
-           切换账号
-         </button>
-         <button id="feedback-btn" onclick="openFeedback()" 
-                 style="display:none;margin-top:10px;padding:10px;background:#4CAF50;color:white;border:none;border-radius:8px;width:100%;">
-           本周反馈
-         </button>
-       </div>
-   
-      <!-- 本周反馈 -->
-      <div id="page7" class="page" style="display:none;">
-        <iframe 
-          src="https://gcngrq2jx611.feishu.cn/share/base/form/shrcnKlDkUUUmc3ijRoBkLKIXbf" 
-          style="width:100%;height:100vh;border:none;filter: invert(90%) hue-rotate(180deg);background-color:#1a1a1a;">
-        </iframe>
-      </div>
-   
-       <!-- 游戏理解 -->
-       <div id="page4" class="page" style="display:none;">
-         <div class="game-menu">
-           <div class="info-card">
-             <div class="card-title">游戏理解</div>
-             <button class="main-btn" onclick="toggleSub('tupu')">图谱等级</button>
-             <div id="tupu-sub" class="sub-menu">
-               <button class="sub-btn" onclick="showAttr('toukui')">头盔</button>
-               <button class="sub-btn" onclick="showAttr('qingxing')">轻型武器</button>
-               <button class="sub-btn" onclick="showAttr('zhongxing')">重型武器</button>
-               <button class="sub-btn" onclick="showAttr('lengbingqi')">冷兵器</button>
-               <button class="sub-btn" onclick="showAttr('hujia')">护甲</button>
-               <button class="sub-btn" onclick="showAttr('hudun')">护盾</button>
-               <button class="sub-btn" onclick="showAttr('wurenji')">无人机</button>
-             </div>
-             <button class="main-btn" onclick="showAccessory()">配件等级</button>
-             <button class="main-btn" onclick="showResearch()">专研消耗</button>
-             <button class="main-btn" onclick="showModify()">装备改造</button>
-             <button class="main-btn" onclick="toggleSub('nami')">纳米转换</button>
-             <div id="nami-sub" class="sub-menu">
-               <button class="sub-btn" onclick="nami1()">纳米Ⅰ</button>
-               <button class="sub-btn" onclick="nami2()">纳米Ⅱ</button>
-               <button class="sub-btn" onclick="nami3()">纳米Ⅲ</button>
-             </div>
-           </div>
-           <div id="attr-content" class="info-card">
-             <div class="card-title" id="attr-title">属性加成</div>
-             <div id="attr-info"></div>
-           </div>
-         </div>
-       </div>
-     </div>
-   
-     <div id="nav">
-       <div class="nav-item active" data-page="page1">兑换商店</div>
-       <div class="nav-item" data-page="page2">问题反馈</div>
-       <div class="nav-item" data-page="page3">我的信息</div>
-       <div class="nav-item" data-page="page4">游戏理解</div>
-     </div>
-   </div>
-   
-   <script>
-     // 硬编码固定名单，不再读取本地缓存
-     const allUserNameList = [
-     "言小言",
-     "呼叫网管",
-     "银耳兔",
-     "唐皖星",
-     "寻己",
-     "祈",
-     "沉潭",
-     "郭大明",
-     "雁过清清",
-     "ABC达达",
-     "懒猫",
-     "痛痛飞",
-     "安笙",
-     "月月鸟",
-     "夏夜",
-     "纷雪",
-     "暖风不吹海",
-     "龙郓",
-     "艾妮珂",
-     "灵罗娃娃",
-     "摘星",
-     "肥肥",
-     "小猫大侠",
-     "百合",
-     "薇薇安",
-     "序千万日",
-     "凑九离",
-     "她叫张乖乖",
-     "残翼",
-     "真的好困",
-     "姜加加",
-     "落雨知夏",
-     "spr春",
-     "万叶酱",
-     "游悠",
-     "逐云sama",
-     "由川",
-     "迷路猫喵",
-     "尤葵",
-     "可乐",
-     "寻夏",
-     "空渊",
-     "几千春清冷",
-     "春风不语",
-     "依旧小麦",
-     "小孟",
-     "胖胖",
-     "碎玉投珠",
-     "凡游",
-     "爱下雨天",
-     "花月如依",
-     "悲观厌世",
-     "语小语",
-     "鹤归云涧",
-     "沉沦在月读中",
-     "奔波儿霸",
-     "大羊",
-     "袖星",
-     "长愫",
-     "辣条",
-     "晚风不渡我",
-     "AAA铃铛",
-     "秋日地板砖",
-     "猛攻鼠六花",
-     "滑稽米",
-     "寄蜉蝣于天地",
-     "泪淋湿我的心",
-     "百合赛高",
-     "NS·塞西",
-     "微笑可爱",
-     "雨十一",
-     "南方不及",
-     "鸠书1"
-     ];
-  
-     // ==================== 全局配置 ====================
-     const GITHUB_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/data.json";
-     const TONGJU_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/tongju.json";
-     const SHOP_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/shop.json";
-     let CAMP_DATA = [];
-     let isLoading = false;
-     
-     // ==================== 引导页 ====================
-     document.addEventListener('DOMContentLoaded', () => {
-       document.querySelector('.enter-btn').onclick = () => {
-         document.getElementById('guide-page').style.opacity = 0;
-         setTimeout(() => {
-           document.getElementById('guide-page').style.display = 'none';
-           document.getElementById('main-app').style.display = 'block';
-           // 进入主页不自动弹窗
-         }, 500);
-       };
-     });
-  
-     // 输入框联想下拉函数
-     function filterNameSuggest(){
-       const inputDom = document.getElementById('game-id-input');
-       const suggestBox = document.getElementById('name-suggest');
-       suggestBox.innerHTML = "";
-       const keyword = inputDom.value.trim().toLowerCase();
-       if (!keyword) {
-         suggestBox.style.display = "none";
-         return;
-       }
-       const matchList = allUserNameList.filter(name => name.toLowerCase().includes(keyword));
-       if(matchList.length === 0){
-         suggestBox.style.display = "none";
-         return;
-       }
-       matchList.forEach(name=>{
-         const div = document.createElement('div');
-         div.style.padding = "9px 12px";
-         div.style.background = "#222";
-         div.style.color = "#fff";
-         div.style.borderBottom = "1px solid #444";
-         div.style.cursor = "pointer";
-         div.onmouseover = ()=>div.style.background="#404040";
-         div.onmouseout = ()=>div.style.background="#222";
-         div.innerText = name;
-         div.onclick = ()=>{
-           inputDom.value = name;
-           suggestBox.style.display = "none";
-         }
-         suggestBox.appendChild(div);
-       })
-       suggestBox.style.display = "block";
-     }
-     
-     // ==================== ID弹窗核心函数 ====================
-     function openIdModal() {
-       const modal = document.getElementById('id-input-modal');
-       modal.style.display = 'flex';
-       const input = document.getElementById('game-id-input');
-       const suggestBox = document.getElementById('name-suggest');
-       // 弹窗打开自动回填上次保存的ID，不用清空
-       const oldId = localStorage.getItem('campUserId') || "";
-       input.value = oldId;
-       suggestBox.style.display = "none";
-       input.focus();
-       input.oninput = filterNameSuggest;
-       input.onblur = () => setTimeout(()=>suggestBox.style.display="none", 200);
-     }
-     function closeIdModal() {
-       document.getElementById('id-input-modal').style.display = 'none';
-     }
-     function confirmIdInput() {
-       const id = document.getElementById('game-id-input').value.trim();
-       closeIdModal();
-       if (!id) {
-         alert("ID不能为空");
-         openIdModal();
-         return;
-       }
-       localStorage.setItem('campUserId', id);
-       // 保存ID后请求加载
-       loadUserInfoReal();
-     }
-     
-     // ==================== 我的信息入口（修复核心） ====================
-     function openUserPageLoad() {
-       const userId = localStorage.getItem('campUserId');
-       // 有缓存ID → 直接加载，不弹窗
-       if(userId && userId.trim() !== ""){
-         loadUserInfoReal();
-       }else{
-         // 无缓存 → 弹出输入框
-         openIdModal();
-       }
-     }
-     
-     // ==================== 网络请求工具 ====================
-     async function fetchWithTimeout(url, timeout = 10000) {
-       const controller = new AbortController();
-       const timer = setTimeout(() => controller.abort(), timeout);
-       try {
-         const res = await fetch(url + "?t=" + Date.now(), { signal: controller.signal });
-         clearTimeout(timer);
-         if (!res.ok) throw new Error("服务器异常");
-         return await res.json();
-       } catch (err) {
-         clearTimeout(timer);
-         throw err;
-       }
-     }
-     
-     // ==================== 我的信息数据加载 ====================
-     async function loadUserInfoReal() {
-       if (isLoading) return;
-       isLoading = true;
-       const status = document.getElementById('user-status');
-       const info = document.getElementById('user-info');
-       const retryBtn = document.getElementById('retry-user-btn');
-       const switchBtn = document.getElementById('feedback-btn');
-       const feedbackBtn = document.getElementById('feedback-btn');
-       status.className = "status-tip status-loading";
-       status.innerHTML = '<span class="spin"></span>正在获取你的信息...';
-       status.style.display = "block";
-       info.style.display = "none";
-       retryBtn.style.display = "none";
-       switchBtn.style.display = "none";
-       feedbackBtn.style.display = "none";
-       try {
-         const userId = localStorage.getItem('campUserId');
-         if (!userId) {
-           status.innerHTML = "请先设置你的游戏ID";
-           openIdModal();
-           isLoading = false;
-           return;
-         }
-         let raw = null;
-         const urls = [
-           "https://ghproxy.net/" + GITHUB_URL,
-           "https://gh-proxy.com/" + GITHUB_URL,
-           GITHUB_URL
-         ];
-         for (let u of urls) {
-           try { raw = await fetchWithTimeout(u,8000); if(raw) break; } catch(e){}
-         }
-         if (!raw) throw new Error("所有线路失败，这不是你的错，也不是我们的问题qwq");
-         CAMP_DATA = raw.map(item => {
-          const baseInfo = {
-            id: item["姓名列"] ?? "",
-            join: item["入营时间"] ?? "",
-            job: item["公共职务或身份"] ?? "",
-            workDay: item["公职日期"] ?? "",
-            count: item["参与次数"] ?? "0",
-            gold: item["累计金额"] ?? "0",
-            targetTech: item["应达科技点"] ?? "",
-            realTech: item["实际科技点"] ?? "",
-            note: item["备注"] ?? "",
-            writeOffList: []
-          };
-          const numMap = {"一":1,"二":2,"三":3,"四":4,"五":5,"六":6,"七":7,"八":8,"九":9,"十":10,"十一":11,"十二":12,"十三":13,"十四":14,"十五":15,"十六":16,"十七":17,"十八":18,"十九":19,"二十":20,"二十一":21,"二十二":22,"二十三":23,"二十四":24,"二十五":25,"二十六":26,"二十七":27,"二十八":28,"二十九":29,"三十":30,"三十一":31,"三十二":32,"三十三":33,"三十四":34,"三十五":35,"三十六":36,"三十七":37,"三十八":38,"三十九":39,"四十":40,"四十一":41,"四十二":42,"四十三":43,"四十四":44,"四十五":45,"四十六":46,"四十七":47,"四十八":48,"四十九":49,"五十":50};
-          const writeOffList = [];
-          for (const key of Object.keys(item)) {
-            const regRes = key.match(/第(.+?)次核销日期/);
-            if (!regRes) continue;
-            const cnName = regRes[1];
-            const idx = numMap[cnName];
-            if (idx === undefined) continue;
-            const moneyKey = `第${cnName}次核销金额`;
-            writeOffList.push({
-              index: idx,
-              date: item[key] ?? "",
-              gold: item[moneyKey] ?? "0"
-            });
-          }
-          writeOffList.sort((a, b) => a.index - b.index);
-          baseInfo.writeOffList = writeOffList;
-          return baseInfo;
-         });
-         const inputName = userId.trim().toLowerCase();
-         const user = CAMP_DATA.find(u => u.id.trim().toLowerCase().includes(inputName));
-         if (!user) {
-           status.className = "status-tip status-error";
-           status.innerHTML = "❌ 未找到该ID，可能出错或未录入，请检查后重试";
-           retryBtn.style.display = "block";
-           localStorage.removeItem('campUserId');
-           isLoading = false;
-           return;
-         }
-         const today = new Date();
-         document.getElementById('user-id').textContent = user.id;
-         const joinTimeEl = document.getElementById('join-time');
-         joinTimeEl.style.color = '';
-         joinTimeEl.style.fontWeight = 'bold';
-         joinTimeEl.style.textShadow = '';
-         const joinTimeStr = (user.join || '').trim();
-         if (joinTimeStr) {
-           const formatJoinTime = joinTimeStr.replace(/\//g, '-');
-           const joinDate = new Date(formatJoinTime);
-           if (!isNaN(joinDate.getTime())) {
-             const diffDays = Math.floor((today - joinDate) / (1000*60*60*24));
-             joinTimeEl.textContent = `${joinTimeStr}（${diffDays} 天）`;
-             if (diffDays >= 1024) {
-               joinTimeEl.style.color = '#001F3F';
-               joinTimeEl.style.textShadow = '2px 2px 2px #FFD700';
-             } else if (diffDays >= 570) {
-               joinTimeEl.style.color = '#9932CC';
-               joinTimeEl.style.textShadow = '2px 2px 1px #FFD700';
-             } else if (diffDays >= 365) {
-               joinTimeEl.style.color = '#8A2BE2';
-               joinTimeEl.style.textShadow = '2px 2px 2px #FFF';
-             } else if (diffDays >= 270) {
-               joinTimeEl.style.color = '#0000FF';
-               joinTimeEl.style.textShadow = '1px 1px 1px #FFF';
-             } else if (diffDays >= 90) {
-               joinTimeEl.style.color = '#4B0082';
-               joinTimeEl.style.textShadow = '1px 1px 1px #FFF';
-             } else if (diffDays >= 60) {
-               joinTimeEl.style.color = '#1E90FF';
-               joinTimeEl.style.textShadow = '1px 1px #000';
-             } else if (diffDays >= 30) {
-               joinTimeEl.style.color = '#87CEEB';
-               joinTimeEl.style.textShadow = '1px 1px #000';
-             }
-           } else {
-             joinTimeEl.textContent = joinTimeStr;
-           }
-         } else {
-           joinTimeEl.textContent = "未设置";
-         }
-         document.getElementById('public-identity').textContent = user.job || "无";
-         const workAgeEl = document.getElementById('work-age');
-         workAgeEl.style.color = '';
-         workAgeEl.style.fontWeight = 'bold';
-         workAgeEl.style.textShadow = '';
-         const workAgeStr = (user.workDay || '').trim();
-         if (workAgeStr) {
-           const formatWorkAge = workAge.replace(/\//g, '-');
-           const workAgeDate = new Date(formatWorkAge);
-           if (!isNaN(workAgeDate.getTime())) {
-             const diffDays = Math.floor((today - workAgeDate) / (1000*60*60*24));
-             workAgeEl.textContent = `${workAgeStr}（${diffDays} 天）`;
-             if (diffDays >= 2048) {
-               workAgeEl.style.color = '#FF8C00';
-               workAgeEl.style.textShadow = '3px 3px 2px #000';
-             } else if (diffDays >= 1024) {
-               workAgeEl.style.color = '#FFD700';
-               workAgeEl.style.textShadow = '2px 2px 2px #000';
-             } else if (diffDays >= 570) {
-               workAgeEl.style.color = '#B8860B';
-               workAgeEl.style.textShadow = '2px 2px 1px #FF0000';
-             } else if (diffDays >= 365) {
-               workAgeEl.style.color = '#800020';
-               workAgeEl.style.textShadow = '2px 2px 2px #FFF';
-             } else if (diffDays >= 270) {
-               workAgeEl.style.color = '#B22222';
-               workAgeEl.style.textShadow = '1px 1px 1px #FFF';
-             } else if (diffDays >= 90) {
-               workAgeEl.style.color = '#FF4500';
-               workAgeEl.style.textShadow = '1px 1px 1px #FFF';
-             } else if (diffDays >= 60) {
-               workAgeEl.style.color = '#FFA500';
-               workAgeEl.style.textShadow = '1px 1px 1px #000';
-             } else if (diffDays >= 30) {
-               workAgeEl.style.color = '#FFD580';
-               workAgeEl.style.textShadow = '1px 1px 1px #000';
-             }
-           } else {
-             workAgeEl.textContent = workAgeStr;
-           }
-         } else {
-           workAgeEl.textContent = "未设置";
-         }
-         document.getElementById('join-count').textContent = user.count;
-         document.getElementById('gold-balance').textContent = Number(user.gold).toLocaleString() + " 金条";
-         document.getElementById('remark').textContent = user.note || "无";
-         document.getElementById('target-tech').textContent = user.targetTech || "0";
-         document.getElementById('real-tech').textContent = user.realTech || "0";
-         const list = document.getElementById('writeoff-list');
-         list.innerHTML = "";
-         let has = false;
-         const writeArr = user.writeOffList;
-         writeArr.forEach(item => {
-           if (item.date && item.date !== "0") {
-             list.innerHTML += `<div class="info-row"><span class="label">第${item.index}次：</span><span class="value">${item.date} | 金额：${item.gold || 0}</span></div>`;
-             has = true;
-           }
-         });
-         if (!has) {
-           list.innerHTML = `<div class="info-row"><span class="label">核销记录</span><span class="value">暂无</span></div>`;
-         }
-         status.style.display = "none";
-         info.style.display = "block";
-         switchBtn.style.display = "block";
-         feedbackBtn.style.display = "block";
-       } catch (e) {
-         console.error(e);
-         status.className = "status-tip status-error";
-         status.innerHTML = "❌ 网络不稳定或无网络状态，请点击重试";
-         retryBtn.style.display = "block";
-       } finally {
-         isLoading = false;
-       }
-     }
-     
-     function loadUserInfo() { loadUserInfoReal(); }
-     
-     function reInputUserId() {
-       if (!confirm("确定要切换账号吗？")) return;
-       localStorage.removeItem('campUserId');
-       openIdModal();
-     }
-     
-     // ==================== 兑换商店 ====================
-     async function loadShop() {
-       if (isLoading) return;
-       isLoading = true;
-       const status = document.getElementById('shop-status');
-       const info = document.getElementById('shop-info');
-       const retryBtn = document.getElementById('retry-shop-btn');
-       status.className = "status-tip status-loading";
-       status.innerHTML = '<span class="spin"></span>正在加载商品...';
-       status.style.display = "block";
-       info.style.display = "none";
-       retryBtn.style.display = "none";
-       try {
-         let goodsData = null;
-         const urls = [
-           "https://ghproxy.net/" + SHOP_URL,
-           "https://gh-proxy.com/" + SHOP_URL,
-           SHOP_URL
-         ];
-         for (let u of urls) {
-           try {
-             goodsData = await fetchWithTimeout(u, 8000);
-             if (goodsData) break;
-           } catch (e) {}
-         }
-         if (!goodsData) {
-           throw new Error("shop.json 加载失败");
-         }
-         let userGold = "0";
-         const userId = localStorage.getItem('campUserId');
-         if (userId && CAMP.length > 0) {
-           const user = CAMP_DATA.find(u => u.id.trim() === userId.trim());
-           if (user) userGold = Number(user.gold).toLocaleString();
-         }
-         document.getElementById('shop-gold').textContent = userGold + " 金条";
-         const box = document.getElementById('shop-items');
-         box.innerHTML = "";
-         const goods = goodsData.filter(i => i.物品名称 && i.物品名称.trim() !== "");
-         if (goods.length === 0) box.innerHTML = `<div class="info-row"><span class="value">暂无商品</div>`;
-         else goods.forEach(g => {
-           box.innerHTML += `
-               <div class="info-row">
-                 <span class="label">${g.物品名称}(${g.单个数量||''})</span>
-                 <span class="value">
-                   <span style="color:#FF9800">${g.价格||0}金条</span><br>
-                   剩余：${g.剩余数量||'无'}<br>
-                   权限：${g.兑换权限||'无'}<br>
-                   备注：${g.备注||'无'}
-                 </span>
-               </div>`;
-         });
-         status.style.display = "none";
-         info.style.display = "block";
-       } catch (e) {
-         console.error("商店错误：", e);
-         status.className = "status-tip status-error";
-         status.innerHTML = "❌ 商店加载失败，请点击重试";
-         retryBtn.style.display = "block";
-       } finally {
-         isLoading = false;
-       }
-     }
-     
-     // ==================== 导航切换（修复核心） ====================
-     document.querySelectorAll('.nav-item').forEach(item => {
-       item.addEventListener('click', () => {
-         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-         item.classList.add('active');
-         const page = item.dataset.page;
-         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-         document.getElementById(page).style.display = 'block';
-         document.getElementById('header-title').textContent = item.textContent;
-         // 兑换商店
-         if (page === 'page1') loadShop();
-         // 我的信息：判断缓存，有ID直接加载，无ID弹窗
-         if (page === 'page3') openUserPageLoad();
-         document.getElementById('back-btn').style.display = page === 'page7' ? 'block' : 'none';
-       });
-     });
-     
-     function goBack() {
-       document.getElementById('back-btn').style.display = 'none';
-       document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-       document.getElementById('page3').style.display = 'block';
-       document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset === 'page3'));
-     }
-     
-     function openFeedback() {
-       document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-       document.getElementById('page7').style.display = 'block';
-       document.getElementById('header-title').textContent = '本周反馈';
-       document.getElementById('back-btn').style.display = 'block';
-       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-     }
-     
-     function toggleSub(){}
-     function showAttr(){}
-     function showAccessory(){}
-     function showResearch(){}
-     function showModify(){}
-     function nami1(){}
-     function nami2(){}
-     function nami3(){}
+	       <style>
+	           * { margin: 0; padding: 0; box-sizing: border-box; }
+	           body { 
+	             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+	             background: #1a1a1a; 
+	             color: #fff;
+	             overflow-x: hidden;
+	           }
+	   
+	           #content { 
+	             padding-top: 50px; 
+	             padding-bottom: 60px; 
+	             height: 100%; 
+	             overflow-y: auto;
+	             overflow-x: hidden;
+	           }
+	   
+	           .page { 
+	             padding: 15px; 
+	             width: 100%; 
+	             max-width: 100%; 
+	           }
+	   
+	           /* 引导页 */
+	           #guide-page { 
+	               position: fixed; 
+	               top: 0; 
+	               left: 0; 
+	               width: 100%; 
+	               height: 100%; 
+	               background: #1a1a1a; 
+	               display: flex; 
+	               flex-direction: column; 
+	               justify-content: center; 
+	               align-items: center; 
+	               z-index: 9999; 
+	               transition: opacity 0.5s; 
+	           }
+	           .guide-content {
+	               text-align: center;
+	               padding: 40px 20px;
+	               max-width: 400px;
+	               width: 100%;
+	           }
+	           .guide-title {
+	               font-size: 36px;
+	               font-weight: bold;
+	               color: #FFD700;
+	               margin-bottom: 10px;
+	               text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+	           }
+	           .guide-subtitle {
+	               font-size: 16px;
+	               color: #aaa;
+	               margin-bottom: 50px;
+	           }
+	           .guide-card {
+	               background: #2a2a2a;
+	               border: 1px solid #444;
+	               border-radius: 16px;
+	               padding: 30px 20px;
+	               margin-bottom: 40px;
+	           }
+	           .guide-item {
+	               margin-bottom: 25px;
+	           }
+	           .guide-item:last-child {
+	               margin-bottom: 0;
+	           }
+	           .guide-icon {
+	               font-size: 32px;
+	               margin-bottom: 8px;
+	           }
+	           .guide-text {
+	               font-size: 18px;
+	               font-weight: bold;
+	               color: #fff;
+	               margin-bottom: 4px;
+	           }
+	           .guide-desc {
+	               font-size: 14px;
+	               color: #aaa;
+	           }
+	           .enter-btn {
+	               width: 100%;
+	               padding: 16px;
+	               background: #FFD700;
+	               color: #1a1a1a;
+	               border: none;
+	               border-radius: 12px;
+	               font-size: 18px;
+	               font-weight: bold;
+	               cursor: pointer;
+	               box-shadow: 0 4px 15px rgba(255,215,0,0.2);
+	               transition: transform 0.2s, box-shadow 0.2s;
+	           }
+	           .enter-btn:active {
+	               transform: scale(0.98);
+	               box-shadow: 0 2px 8px rgba(255,215,0,0.2);
+	           }
+	   
+	           /* 主界面 */
+	           #main-app { display: none; width: 100%; height: 100vh; position: relative; }
+	           #header { position: fixed; top: 0; left: 0; width: 100%; height: 50px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; z-index: 100; border-bottom: 1px solid #444; }
+	           #header-title { font-size: 18px; font-weight: bold; }
+	           #back-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; display: none; }
+	   
+	           .info-card { background: #2a2a2a; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+	           .card-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #FFD700; }
+	           .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #444; }
+	           .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+	   
+	           /* 兑换商店排版 */
+	           #shop-items .info-row {
+	             display: flex;
+	             align-items: flex-start;
+	             justify-content: flex-start;
+	             gap: 10px;
+	             padding: 8px 0;
+	             border-bottom: 1px solid #3a3a3a;
+	           }
+	           #shop-items .label {
+	             min-width: 120px;
+	             color: #FFD700;
+	             font-weight: bold;
+	           }
+	           #shop-items .value {
+	             text-align: left;
+	             line-height: 1.4;
+	           }
+	   
+	           .label { color: #aaa; }
+	           .value { color: #fff; font-weight: 500; }
+	   
+	           /* 导航 */
+	           #nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: #2a2a2a; display: flex; border-top: 1px solid #444; z-index: 100; }
+	           .nav-item { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 12px; color: #aaa; cursor: pointer; transition: all 0.2s; }
+	           .nav-item.active { color: #FFD700; background: #333; }
+	   
+	           /* 游戏理解布局 */
+	           .game-menu {
+	             display: flex;
+	             gap: 0; 
+	             width: 100%;
+	             height: calc(100vh - 120px); 
+	           }
+	           .game-menu > .info-card:first-child {
+	             width: 72px;
+	             background: #1f1f1f;
+	             border-radius: 8px 0 0 8px;
+	             margin: 0;
+	             padding: 0;
+	             height: 100%;
+	             overflow-y: auto;
+	             box-shadow: inset -2px 0 10px rgba(0,0,0,0.3);
+	           }
+	           .game-menu > .info-card:first-child .card-title {
+	             padding: 15px 5px;
+	             margin: 0;
+	             background: linear-gradient(135deg, #333 0%, #222 100%);
+	             border-bottom: 1px solid #444;
+	             text-align: center;
+	             font-size: 14px;
+	           }
+	           .main-btn {
+	             width: 100%;
+	             padding: 15px 5px;
+	             background: linear-gradient(180deg, #4a6a88 0%, #3b5875 100%);
+	             color: #fff;
+	             border: none;
+	             border-bottom: 1px solid #2d455c;
+	             font-size: 14px;
+	             text-align: center;
+	             cursor: pointer;
+	           }
+	           .sub-menu {
+	             display: none;
+	             background: #283848;
+	           }
+	           .sub-btn {
+	             width: 100%;
+	             padding: 12px 5px;
+	             background: #3a4a5a;
+	             color: #fff;
+	             border: none;
+	             border-bottom: 1px solid #1f2f3f;
+	             font-size: 12px;
+	             text-align: center;
+	             cursor: pointer;
+	           }
+	           #attr-content {
+	             flex: 1; 
+	             padding: 15px;
+	             background: #2a2a2a;
+	             border-radius: 0 8px 8px 0;
+	             height: 100%;
+	             overflow-y: auto;
+	           }
+	   
+	           /* 加载动画 */
+	           .spin {
+	             display: inline-block;
+	             width: 14px;
+	             height: 14px;
+	             border: 2px solid #FFD700;
+	             border-top-color: transparent;
+	             border-radius: 50%;
+	             animation: spin 0.8s linear infinite;
+	             margin-right: 6px;
+	           }
+	           @keyframes spin {
+	             to { transform: rotate(360deg); }
+	           }
+	   
+	           /* 状态提示 */
+	           .status-tip {
+	             padding: 10px;
+	             border-radius: 8px;
+	             margin: 10px 0;
+	             font-size: 14px;
+	           }
+	           .status-loading {
+	             background: #333;
+	             color: #FFD700;
+	           }
+	           .status-error {
+	             background: #442222;
+	             color: #ff6b6b;
+	           }
+	   
+	           /* ID弹窗 */
+	           #id-input-modal {
+	             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+	             background: rgba(0,0,0,0.8); z-index: 99999;
+	             display: none; justify-content: center; align-items: center;
+	           }
+	           .modal-content {
+	             background: #2a2a2a; border-radius: 12px; padding: 25px;
+	             width: 90%; max-width: 350px; border: 1px solid #444;
+	           }
+	           .modal-title {
+	             font-size: 18px; font-weight: bold; color: #FFD700;
+	             margin-bottom: 15px; text-align: center;
+	           }
+	           .modal-input {
+	             width: 100%; padding: 12px; border-radius: 8px;
+	             border: 1px solid #444; background: #1a1a1a; color: #fff;
+	             font-size: 16px; margin-bottom: 15px;
+	           }
+	           .modal-buttons {
+	             display: flex; gap: 10px;
+	           }
+	           .modal-btn {
+	             flex: 1; padding: 12px; border-radius: 8px;
+	             border: none; font-size: 16px; font-weight: bold;
+	             cursor: pointer;
+	           }
+	           .btn-confirm {
+	             background: #FFD700; color: #1a1a1a;
+	           }
+	           .btn-cancel {
+	             background: #444; color: #fff;
+	           }
+	       </style>
+	   </head>
+	   <body>
+	   
+	   <!-- ID输入弹窗 -->
+	   <div id="id-input-modal">
+	     <div class="modal-content">
+	       <div class="modal-title">请输入游戏ID <br>（过长或特殊id会简化处理，<br>请询问市长）</div>
+	       <input type="text" class="modal-input" id="game-id-input" placeholder="请输入你的游戏ID" autocomplete="off">
+	       <div class="modal-buttons">
+	         <button class="modal-btn btn-cancel" onclick="closeIdModal()">取消</button>
+	         <button class="modal-btn btn-confirm" onclick="confirmIdInput()">确定</button>
+	       </div>
+	     </div>
+	   </div>
+	   
+	   <!-- 引导页 -->
+	   <div id="guide-page">
+	     <div class="guide-content">
+	       <div class="guide-title">归去来兮序e通办</div>
+	       <div class="guide-subtitle">—— 六年走来，你我同行 ——</div>
+	       <div class="guide-card">
+	         <div class="guide-item">
+	           <div class="guide-icon">📌</div>
+	           <div class="guide-text">轻量化设计</div>
+	           <div class="guide-desc">无需注册、登录，直接查看内容，提交报名</div>
+	         </div>
+	         <div class="guide-item">
+	           <div class="guide-icon">📢</div>
+	           <div class="guide-text">同居园地 —— 活动报名</div>
+	           <div class="guide-desc">实时查看营地最新动态·参与营地精彩活动</div>
+	         </div>
+	         <div class="guide-item">
+	           <div class="guide-icon">📊</div>
+	           <div class="guide-text">明日宝典</div>
+	           <div class="guide-desc">装备/专研/配件/纳米塑材转换数据查询</div>
+	         </div>
+	       </div>
+	       <button class="enter-btn">进入营地</button>
+	     </div>
+	   </div>
+	   
+	   <!-- 主应用 -->
+	   <div id="main-app">
+	     <div id="header">
+	       <button id="back-btn" onclick="goBack()">← 返回</button>
+	       <div id="header-title">归去来兮序</div>
+	     </div>
+	   
+	     <div id="content">
+	       
+	   
+	      
+	       <!-- 兑换商店 -->
+	       <div id="page1" class="page" style="display:none;">
+	         <div id="shop-status" class="status-tip status-loading">
+	           <span class="spin"></span>正在加载商品数据...
+	         </div>
+	         <div id="shop-info" style="display:none;">
+	           <div class="info-card">
+	             <div class="card-title">我的金条</div>
+	             <div class="info-row">
+	               <span class="label">可用金条</span>
+	               <span class="value" id="shop-gold" style="color:#FFD700;font-weight:bold;"></span>
+	             </div>
+	           </div>
+	           <div class="info-card">
+	             <div class="card-title">可兑换商品</div>
+	             <div id="shop-items"></div>
+	           </div>
+	         </div>
+	         <button id="retry-shop-btn" style="display:none;margin-top:20px;padding:12px;background:#FFD700;color:#000;border:none;border-radius:8px;width:100%;" onclick="loadShop()">
+	           重新加载商品
+	         </button>
+	       </div>
+	   
+	       <!-- 问题反馈 -->
+	       <div id="page2" class="page" style="display:none;">
+	         <iframe src="https://gcngrq2jx611.feishu.cn/share/base/form/shrcn9n1q5oC8HrP0TeGcXdXSHd" 
+	                 style="width:100%;height:100vh;border:none;filter: invert(90%) hue-rotate(180deg);background-color:#1a1a1a;"></iframe>
+	       </div>
+	   
+	       <!-- 我的信息 -->
+	       <div id="page3" class="page" style="display:none;">
+	         <div id="user-status" class="status-tip status-loading">
+	           <span class="spin"></span>请点击切换认证...
+	         </div>
+	   
+	         <div id="user-info" style="display:none;">
+	           <div class="info-card">
+	             <div class="card-title">我的信息</div>
+	             <div class="info-row"><span class="label">游戏ID</span><span class="value" id="user-id"></span></div>
+	             <div class="info-row"><span class="label">入营时间</span><span class="value" id="join-time"></span></div>
+	             <div class="info-row"><span class="label">公共职务</span><span class="value" id="public-identity"></span></div>
+	             <div class="info-row"><span class="label">公职工龄</span><span class="value" id="work-age"></span></div>
+	             <div class="info-row"><span class="label">参与次数</span><span class="value" id="join-count"></span></div>
+	             <div class="info-row"><span class="label">可兑换金条</span><span class="value" id="gold-balance"></span></div>
+	             <div class="info-row"><span class="label">备注</span><span class="value" id="remark"></span></div>
+	             <div class="info-row"><span class="label">应捐科技点数量</span><span class="value" id="target-tech"></span></div>
+	             <div class="info-row"><span class="label">已捐科技点数量</span><span class="value" id="real-tech"></span></div>
+			   </div>
+	           <div class="info-card">
+	             <div class="card-title">核销记录</div>
+	             <div id="writeoff-list"></div>
+	           </div>
+	         </div>
+	   
+	         <button id="retry-user-btn" style="display:none;margin-top:20px;padding:12px;background:#FFD700;color:#000;border:none;border-radius:8px;width:100%;" onclick="loadUserInfoReal()">
+	           重新加载我的信息
+	         </button>
+	   
+	         <button id="switch-account-btn-local" onclick="reInputUserId()" 
+	                 style="margin-top:15px;padding:10px;background:#ff6b6b;color:white;border:none;border-radius:8px;width:100%;">
+	           切换账号
+	         </button>
+	         <button id="feedback-btn" onclick="openFeedback()" 
+	                 style="display:none;margin-top:10px;padding:10px;background:#4CAF50;color:white;border:none;border-radius:8px;width:100%;">
+	           本周反馈
+	         </button>
+	       </div>
+	   
+	      <!-- 本周反馈 -->
+	      <div id="page7" class="page" style="display:none;">
+	        <iframe 
+	          src="https://gcngrq2jx611.feishu.cn/share/base/form/shrcnKlDkUUUmc3ijRoBkLKIXbf" 
+	          style="width:100%;height:100vh;border:none;filter: invert(90%) hue-rotate(180deg);background-color:#1a1a1a;">
+	        </iframe>
+	      </div>
+	   
+	       <!-- 游戏理解 -->
+	       <div id="page4" class="page" style="display:none;">
+	         <div class="game-menu">
+	           <div class="info-card">
+	             <div class="card-title">游戏理解</div>
+	             <button class="main-btn" onclick="toggleSub('tupu')">图谱等级</button>
+	             <div id="tupu-sub" class="sub-menu">
+	               <button class="sub-btn" onclick="showAttr('toukui')">头盔</button>
+	               <button class="sub-btn" onclick="showAttr('qingxing')">轻型武器</button>
+	               <button class="sub-btn" onclick="showAttr('zhongxing')">重型武器</button>
+	               <button class="sub-btn" onclick="showAttr('lengbingqi')">冷兵器</button>
+	               <button class="sub-btn" onclick="showAttr('hujia')">护甲</button>
+	               <button class="sub-btn" onclick="showAttr('hudun')">护盾</button>
+	               <button class="sub-btn" onclick="showAttr('wurenji')">无人机</button>
+	             </div>
+	             <button class="main-btn" onclick="showAccessory()">配件等级</button>
+	             <button class="main-btn" onclick="showResearch()">专研消耗</button>
+	             <button class="main-btn" onclick="showModify()">装备改造</button>
+	             <button class="main-btn" onclick="toggleSub('nami')">纳米转换</button>
+	             <div id="nami-sub" class="sub-menu">
+	               <button class="sub-btn" onclick="nami1()">纳米Ⅰ</button>
+	               <button class="sub-btn" onclick="nami2()">纳米Ⅱ</button>
+	               <button class="sub-btn" onclick="nami3()">纳米Ⅲ</button>
+	             </div>
+	           </div>
+	           <div id="attr-content" class="info-card">
+	             <div class="card-title" id="attr-title">属性加成</div>
+	             <div id="attr-info"></div>
+	           </div>
+	         </div>
+	       </div>
+	     </div>
+	   
+	     <div id="nav">
+	       <div class="nav-item active" data-page="page1">兑换商店</div>
+	       <div class="nav-item" data-page="page2">问题反馈</div>
+	       <div class="nav-item" data-page="page3">我的信息</div>
+	       <div class="nav-item" data-page="page4">游戏理解</div>
+	     </div>
+	   </div>
+	   
+	   <script>
+	   // ==================== 全局配置 ====================
+	   const GITHUB_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/data.json";
+	   const SHOP_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/shop.json";
+	   let CAMP_DATA = [];
+	   let isLoading = false;
+	   
+	  // ==================== 引导页 ====================
+	  document.addEventListener('DOMContentLoaded', () => {
+	    document.querySelector('.enter-btn').onclick = () => {
+	      document.getElementById('guide-page').style.opacity = 0;
+	      setTimeout(() => {
+	        document.getElementById('guide-page').style.display = 'none';
+	        document.getElementById('main-app').style.display = 'block';
+	        // 进入营地自动加载兑换商店数据，解决空白
+	        loadShop();
+	      }, 500);
+	    };
+	  });
+	   // ==================== ID弹窗 ====================
+	  function openIdModal() {
+	    const modal = document.getElementById('id-input-modal');
+	    const input = document.getElementById('game-id-input');
+	    const suggestBox = document.getElementById('name-suggest');
+	    modal.style.display = 'flex';
+	    suggestBox.style.display = 'none';
+	    // 读取本地保存的上次ID并回填
+	    const lastId = localStorage.getItem('campUserId') || '';
+	    input.value = lastId;
+	    input.focus();
+	  }
+	  function closeIdModal() {
+	    document.getElementById('id-input-modal').style.display = 'none';
+	  }
+	  function confirmIdInput() {
+	    const id = document.getElementById('game-id-input').value.trim();
+	    closeIdModal();
+	    if (!id) {
+	      alert("ID不能为空");
+	      openIdModal();
+	      return;
+	    }
+	    localStorage.setItem('campUserId', id);
+	    loadUserInfoReal();
+	  }
+	   
+	   // ==================== 网络请求工具 ====================
+	   async function fetchWithTimeout(url, timeout = 10000) {
+	     const controller = new AbortController();
+	     const timer = setTimeout(() => controller.abort(), timeout);
+	     try {
+	       const res = await fetch(url + "?t=" + Date.now(), { signal: controller.signal });
+	       clearTimeout(timer);
+	       if (!res.ok) throw new Error("服务器异常");
+	       return await res.json();
+	     } catch (err) {
+	       clearTimeout(timer);
+	       throw err;
+	     }
+	   }
+	   
+	   
+	   // ==================== 我的信息 ====================
+	   async function loadUserInfoReal() {
+	     if (isLoading) return;
+	     isLoading = true;
+	   
+	     const status = document.getElementById('user-status');
+	     const info = document.getElementById('user-info');
+	     const retryBtn = document.getElementById('retry-user-btn');
+	     const switchBtn = document.getElementById('switch-account-btn-local');
+	     const feedbackBtn = document.getElementById('feedback-btn');
+	   
+	     status.className = "status-tip status-loading";
+	     status.innerHTML = '<span class="spin"></span>正在获取你的信息...';
+	     status.style.display = "block";
+	     info.style.display = "none";
+	     retryBtn.style.display = "none";
+	     switchBtn.style.display = "none";
+	     feedbackBtn.style.display = "none";
+	   
+	     try {
+	       const userId = localStorage.getItem('campUserId');
+	       if (!userId) {
+	         status.innerHTML = "请先设置你的游戏ID";
+	         openIdModal();
+	         isLoading = false;
+	         return;
+	       }
+	   
+	       let raw = null;
+	       const urls = [
+	         "https://ghproxy.net/" + GITHUB_URL,
+	         "https://gh-proxy.com/" + GITHUB_URL,
+	         GITHUB_URL
+	       ];
+	   
+	       for (let u of urls) {
+	         try { raw = await fetchWithTimeout(u,8000); if(raw) break; } catch(e){}
+	       }
+	       if (!raw) throw new Error("所有线路失败，这不是你的错，也不是我们的问题qwq");
+	   
+	       CAMP_DATA = raw.map(item => {
+	         // 基础固定字段
+	         const baseInfo = {
+	           id: item["姓名列"] ?? "",
+	           join: item["入营时间"] ?? "",
+	           job: item["公共职务或身份"] ?? "",
+	           workDay: item["公职日期"] ?? "",
+	           count: item["参与次数"] ?? "0",
+	           gold: item["累计金额"] ?? "0",
+	           targetTech: item["应达科技点"] ?? "",
+	           realTech: item["实际科技点"] ?? "",
+	           note: item["备注"] ?? "",
+	           // 核销数组，自动存放所有核销记录
+	           writeOffList: []
+	         };
+	       
+	         // 数字中文映射：一=1 二=2 ... 一万=10000
+	         const numMap = {"一":1,"二":2,"三":3,"四":4,"五":5,"六":6,"七":7,"八":8,"九":9,"十":10,"十一":11,"十二":12,"十三":13,"十四":14,"十五":15,"十六":16,"十七":17,"十八":18,"十九":19,"二十":20,"二十一":21,"二十二":22,"二十三":23,"二十四":24,"二十五":25,"二十六":26,"二十七":27,"二十八":28,"二十九":29,"三十":30,"三十一":31,"三十二":32,"三十三":33,"三十四":34,"三十五":35,"三十六":36,"三十七":37,"三十八":38,"三十九":39,"四十":40,"四十一":41,"四十二":42,"四十三":43,"四十四":44,"四十五":45,"四十六":46,"四十七":47,"四十八":48,"四十九":49,
+			 "五十":50};
+	       
+	         // 遍历所有json键，自动抓取核销字段
+	         for(const key in item){
+	           // 匹配格式：第X次核销日期
+	           if(key.includes("次核销日期")){
+	             const match = key.match(/第(.+?)次核销日期/);
+	             if(!match) continue;
+	             const cnNum = match[1];
+	             const num = numMap[cnNum];
+	             if(num === undefined) continue;
+	             const dateVal = item[key];
+	             const feeKey = `第${cnNum}次核销金额`;
+	             const feeVal = item[feeKey] ?? "0";
+	             // 存入核销数组
+	             baseInfo.writeOffList.push({
+	               index: num,
+	               date: dateVal,
+	               gold: feeVal
+	             });
+	           }
+	         }
+	       
+	         // 按次数从小到大排序核销记录
+	         baseInfo.writeOffList.sort((a,b)=>a.index - b.index);
+	         return baseInfo;
+	       });
+	   
+	       const user = CAMP_DATA.find(u => u.id.trim() === userId.trim());
+	       if (!user) {
+	         status.className = "status-tip status-error";
+	         status.innerHTML = "❌ 未找到该ID，可能出错或未录入，请检查后重试";
+	         retryBtn.style.display = "block";
+	         localStorage.removeItem('campUserId');
+	         isLoading = false;
+	         return;
+	       }
+	   
+	       const today = new Date();
+	       document.getElementById('user-id').textContent = user.id;
+	   
+	       const joinTimeEl = document.getElementById('join-time');
+	       joinTimeEl.style.color = '';
+	       joinTimeEl.style.fontWeight = 'bold';
+	       joinTimeEl.style.textShadow = '';
+	       const joinTimeStr = (user.join || '').trim();
+	       if (joinTimeStr) {
+	         const formatJoinTime = joinTimeStr.replace(/\//g, '-');
+	         const joinDate = new Date(formatJoinTime);
+	         if (!isNaN(joinDate.getTime())) {
+	           const diffDays = Math.floor((today - joinDate) / (1000*60*60*24));
+	           joinTimeEl.textContent = `${joinTimeStr}（${diffDays} 天）`;
+	           if (diffDays >= 1024) {
+	             joinTimeEl.style.color = '#001F3F';
+	             joinTimeEl.style.textShadow = '2px 2px 2px #FFD700';
+	           } else if (diffDays >= 570) {
+	             joinTimeEl.style.color = '#9932CC';
+	             joinTimeEl.style.textShadow = '2px 2px 1px #FFD700';
+	           } else if (diffDays >= 365) {
+	             joinTimeEl.style.color = '#8A2BE2';
+	             joinTimeEl.style.textShadow = '2px 2px 2px #FFF';
+	           } else if (diffDays >= 270) {
+	             joinTimeEl.style.color = '#0000FF';
+	             joinTimeEl.style.textShadow = '1px 1px 1px #FFF';
+	           } else if (diffDays >= 90) {
+	             joinTimeEl.style.color = '#4B0082';
+	             joinTimeEl.style.textShadow = '1px 1px 1px #FFF';
+	           } else if (diffDays >= 60) {
+	             joinTimeEl.style.color = '#1E90FF';
+	             joinTimeEl.style.textShadow = '1px 1px 1px #000';
+	           } else if (diffDays >= 30) {
+	             joinTimeEl.style.color = '#87CEEB';
+	             joinTimeEl.style.textShadow = '1px 1px 1px #000';
+	           }
+	         } else {
+	           joinTimeEl.textContent = joinTimeStr;
+	         }
+	       } else {
+	         joinTimeEl.textContent = "未设置";
+	       }
+	   
+	       document.getElementById('public-identity').textContent = user.job || "无";
+	   
+	       const workAgeEl = document.getElementById('work-age');
+	       workAgeEl.style.color = '';
+	       workAgeEl.style.fontWeight = 'bold';
+	       workAgeEl.style.textShadow = '';
+	       const workAgeStr = (user.workDay || '').trim();
+	       if (workAgeStr) {
+	         const formatWorkAge = workAgeStr.replace(/\//g, '-');
+	         const workAgeDate = new Date(formatWorkAge);
+	         if (!isNaN(workAgeDate.getTime())) {
+	           const diffDays = Math.floor((today - workAgeDate) / (1000*60*60*24));
+	           workAgeEl.textContent = `${workAgeStr}（${diffDays} 天）`;
+	           if (diffDays >= 2048) {
+	             workAgeEl.style.color = '#FF8C00';
+	             workAgeEl.style.textShadow = '3px 3px 2px #000';
+	           } else if (diffDays >= 1024) {
+	             workAgeEl.style.color = '#FFD700';
+	             workAgeEl.style.textShadow = '2px 2px 2px #000';
+	           } else if (diffDays >= 570) {
+	             workAgeEl.style.color = '#B8860B';
+	             workAgeEl.style.textShadow = '2px 2px 1px #FF0000';
+	           } else if (diffDays >= 365) {
+	             workAgeEl.style.color = '#800020';
+	             workAgeEl.style.textShadow = '2px 2px 2px #FFF';
+	           } else if (diffDays >= 270) {
+	             workAgeEl.style.color = '#B22222';
+	             workAgeEl.style.textShadow = '1px 1px 1px #FFF';
+	           } else if (diffDays >= 90) {
+	             workAgeEl.style.color = '#FF4500';
+	             workAgeEl.style.textShadow = '1px 1px 1px #FFF';
+	           } else if (diffDays >= 60) {
+	             workAgeEl.style.color = '#FFA500';
+	             workAgeEl.style.textShadow = '1px 1px 1px #000';
+	           } else if (diffDays >= 30) {
+	             workAgeEl.style.color = '#FFD580';
+	             workAgeEl.style.textShadow = '1px 1px 1px #000';
+	           }
+	         } else {
+	           workAgeEl.textContent = workAgeStr;
+	         }
+	       } else {
+	         workAgeEl.textContent = "未设置";
+	       }
+	   
+document.getElementById('join-count').textContent = user.count;
+document.getElementById('gold-balance').textContent = Number(user.gold).toLocaleString() + " 金条";
+document.getElementById('remark').textContent = user.note || "无";
+// 新增科技点赋值
+document.getElementById('target-tech').textContent = user.targetTech || "0";
+document.getElementById('real-tech').textContent = user.realTech || "0";
+
+// 核销区域
+const list = document.getElementById('writeoff-list');
+list.innerHTML = "";
+let has = false;
+const writeArr = user.writeOffList;
+
+writeArr.forEach(item => {
+  if (item.date && item.date !== "0") {
+    list.innerHTML += `<div class="info-row"><span class="label">第${item.index}次：</span><span class="value">${item.date} | 金额：${item.gold || 0}</span></div>`;
+    has = true;
+  }
+});
+
+if (!has) {
+  list.innerHTML = `<div class="info-row"><span class="label">核销记录</span><span class="value">暂无</span></div>`;
+}
+
+status.style.display = "none";
+info.style.display = "block";
+switchBtn.style.display = "block";
+feedbackBtn.style.display = "block";
+	   
+	     } catch (e) {
+	       console.error(e);
+	       status.className = "status-tip status-error";
+	       status.innerHTML = "❌ 网络不稳定或无网络状态，请点击重试。可能这不是你的错，也不是我们的问题qwq";
+	       retryBtn.style.display = "block";
+	     } finally {
+	       isLoading = false;
+	     }
+	   }
+	   
+	   function loadUserInfo() { loadUserInfoReal(); }
+	   
+	  function reInputUserId() {
+	    if (!confirm("确定要切换账号吗？")) return;
+	    localStorage.removeItem('campUserId');
+	    openIdModal();
+	  }
+	   
+	   // ==================== 兑换商店 ====================
+	  async function loadShop() {
+	    if (isLoading) return;
+	    isLoading = true;
+	  
+	    const status = document.getElementById('shop-status');
+	    const info = document.getElementById('shop-info');
+	    const retryBtn = document.getElementById('retry-shop-btn');
+	  
+	    status.className = "status-tip status-loading";
+	    status.innerHTML = '<span class="spin"></span>正在加载商品...';
+	    status.style.display = "block";
+	    info.style.display = "none";
+	    retryBtn.style.display = "none";
+	  
+	    try {
+	      let goodsData = null;
+	      const urls = [
+	        "https://ghproxy.net/" + SHOP_URL,
+	        "https://gh-proxy.com/" + SHOP_URL,
+	        SHOP_URL
+	      ];
+	      for (let u of urls) {
+	        try {
+	          goodsData = await fetchWithTimeout(u, 8000);
+	          if (goodsData) break;
+	        } catch (e) {}
+	      }
+	  
+	      if (!goodsData) {
+	        throw new Error("shop.json 加载失败");
+	      }
+	  
+	      let userGold = "0";
+	      const userId = localStorage.getItem('campUserId');
+	      if (userId && CAMP_DATA.length > 0) {
+	        const user = CAMP_DATA.find(u => u.id.trim() === userId.trim());
+	        if (user) {
+	          userGold = Number(user.gold || 0).toLocaleString();
+	        }
+	      }
+	      // 去掉固定「金条」后缀，只输出原始数值
+	      document.getElementById('shop-gold').textContent = userGold;
+	  
+	      const box = document.getElementById('shop-items');
+	      box.innerHTML = "";
+	      const goods = goodsData.filter(i => i.物品名称 && i.物品名称.trim() !== "");
+	  
+	      if (goods.length === 0) {
+	        box.innerHTML = `<div class="info-row"><span class="value">暂无商品</span></div>`;
+	      } else {
+	        goods.forEach(g => {
+	          box.innerHTML += `
+	            <div class="info-row">
+	              <span class="label">${g.物品名称}${g.单个数量 ? `(${g.单个数量})` : ''}</span>
+	              <span class="value">
+	                <span style="color:#FF9800">${g.价格 ?? ''}</span><br>
+	                剩余：${g.剩余数量 ?? '无'}<br>
+	                权限：${g.兑换权限 ?? '无'}<br>
+	                备注：${g.备注 ?? '无'}
+	              </span>
+	            </div>`;
+	        });
+	      }
+	  
+	      status.style.display = "none";
+	      info.style.display = "block";
+	  
+	    } catch (e) {
+	      console.error("商店错误：", e);
+	      status.className = "status-tip status-error";
+	      status.innerHTML = "❌ 商店加载失败，请点击重试";
+	      retryBtn.style.display = "block";
+	    } finally {
+	      isLoading = false;
+	    }
+	  }
+	   
+	// ==================== 导航栏切换逻辑 ====================
+	// 遍历底部全部导航标签，统一绑定点击事件
+	document.querySelectorAll('.nav-item').forEach(item => {
+	  item.addEventListener('click', () => {
+	    // 清除所有导航的激活高亮
+	    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+	    // 当前点击导航设为激活
+	    item.classList.add('active');
+	    // 获取导航绑定的页面编号
+	    const page = item.dataset.page;
+	    // 隐藏全部页面面板
+	    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+	    // 展示当前选中页面
+	    document.getElementById(page).style.display = 'block';
+	    // 顶部标题同步为导航文字
+	    document.getElementById('header-title').textContent = item.textContent;
+	
+	    // 页面对应逻辑（和HTML页面ID严格一一对应）
+	    if (page === 'page1') {
+	      // page1=兑换商店，加载商店数据
+	      loadShop();
+	    }
+	    if (page === 'page3') {
+	      // page3=我的信息，先弹出ID输入弹窗，确认后加载用户数据
+	      openIdModal();
+	    }
+	    // page2问题反馈、page4游戏理解无自动加载逻辑，无需处理
+	
+	    // 只有本周反馈page7显示顶部返回按钮，其余页面隐藏
+	    document.getElementById('back-btn').style.display = page === 'page7' ? 'block' : 'none';
+	  });
+	});
+	
+	// ==================== 返回按钮函数（修复不存在的page5，切回我的信息page3） ====================
+	function goBack() {
+	  // 隐藏返回按钮
+	  document.getElementById('back-btn').style.display = 'none';
+	  // 隐藏所有页面
+	  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+	  // 切回【我的信息】page3（HTML真实存在的页面）
+	  document.getElementById('page3').style.display = 'block';
+	  document.getElementById('header-title').textContent = '我的信息';
+	  // 导航栏激活「我的信息」标签
+	  document.querySelectorAll('.nav-item').forEach(i => {
+	    i.classList.toggle('active', i.dataset.page === 'page3');
+	  });
+	}
+	
+	// ==================== 跳转本周反馈页面 ====================
+	function openFeedback() {
+	  // 隐藏所有页面
+	  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+	  // 打开反馈page7
+	  document.getElementById('page7').style.display = 'block';
+	  document.getElementById('header-title').textContent = '本周反馈';
+	  // 显示返回按钮
+	  document.getElementById('back-btn').style.display = 'block';
+	  // 取消全部导航激活状态
+	  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+	}
+	   
+	   function toggleSub(){}
+	   function showAttr(){}
+	   function showAccessory(){}
+	   function showResearch(){}
+	   function showModify(){}
+	   function nami1(){}
+	   function nami2(){}
+	   function nami3(){}
 	   
 	   // ==================== 游戏理解 ====================
 	   function toggleSub(id) {
