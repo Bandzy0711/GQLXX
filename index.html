@@ -456,16 +456,16 @@
 	      }, 500);
 	    };
 	  });
-	   // ==================== ID弹窗 ====================
+	  // ==================== ID弹窗 ====================
 	  function openIdModal() {
 	    const modal = document.getElementById('id-input-modal');
 	    const input = document.getElementById('game-id-input');
 	    const suggestBox = document.getElementById('name-suggest');
 	    modal.style.display = 'flex';
 	    suggestBox.style.display = 'none';
-	    // 读取本地保存的上次ID并回填
-	    const lastId = localStorage.getItem('campUserId') || '';
-	    input.value = lastId;
+	    // 永久读取本地存储，关闭页面再打开依然存在
+	    const saveId = localStorage.getItem('campUserId') ?? "";
+	    input.value = saveId;
 	    input.focus();
 	  }
 	  function closeIdModal() {
@@ -479,6 +479,7 @@
 	      openIdModal();
 	      return;
 	    }
+	    // 输入确定永久存入本地
 	    localStorage.setItem('campUserId', id);
 	    loadUserInfoReal();
 	  }
@@ -724,11 +725,11 @@ feedbackBtn.style.display = "block";
 	   
 	   function loadUserInfo() { loadUserInfoReal(); }
 	   
-	  function reInputUserId() {
-	    if (!confirm("确定要切换账号吗？")) return;
-	    localStorage.removeItem('campUserId');
-	    openIdModal();
-	  }
+	function reInputUserId() {
+	  if (!confirm("确定要切换账号吗？")) return;
+	  // 删掉 localStorage.removeItem('campUserId'); 不清空历史记录
+	  openIdModal();
+	}
 	   
 	   // ==================== 兑换商店 ====================
 	  async function loadShop() {
@@ -841,7 +842,7 @@ feedbackBtn.style.display = "block";
 	  });
 	});
 	
-	// ==================== 返回按钮函数（修复不存在的page5，切回我的信息page3） ====================
+	// ==================== 返回按钮函数 ====================
 	function goBack() {
 	  // 隐藏返回按钮
 	  document.getElementById('back-btn').style.display = 'none';
