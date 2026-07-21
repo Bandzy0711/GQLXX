@@ -437,11 +437,11 @@
 	    </div>
 	    
 	    <script>
-	    // ==================== 全局配置 ====================
-	    const GITHUB_URL = "http://115.28.210.153/users";
-	    const SHOP_URL = "https://raw.githubusercontent.com/Bandzy0711/GQLXX/main/shop.json";
-	    let CAMP_DATA = [];
-	    let isLoading = false;
+	  // ==================== 全局配置 ====================
+	  const GITHUB_URL = "http://gqlxx.ddns.net/api/users";
+	  const SHOP_URL = "http://gqlxx.ddns.net/api/shop";
+	  let CAMP_DATA = [];
+	  let isLoading = false;
 	    
 	   // ==================== 引导页 ====================
 	   document.addEventListener('DOMContentLoaded', () => {
@@ -664,71 +664,158 @@
 	   openIdModal();
 	 }
 	    
-	    // ==================== 兑换商店 ====================
-	   async function loadShop() {
-	     if (isLoading) return;
-	     isLoading = true;
-	   
-	     const status = document.getElementById('shop-status');
-	     const info = document.getElementById('shop-info');
-	     const retryBtn = document.getElementById('retry-shop-btn');
-	   
-	     status.className = "status-tip status-loading";
-	     status.innerHTML = '<span class="spin"></span>正在加载商品...';
-	     status.style.display = "block";
-	     info.style.display = "none";
-	     retryBtn.style.display = "none";
-	   
-	     try {
-	       let goodsData = await fetchWithTimeout(SHOP_URL,8000);
-	   
-	       if (!goodsData) {
-	         throw new Error("shop.json 加载失败");
-	       }
-	   
-	       let userGold = "0";
-	       const userId = localStorage.getItem('campUserId');
-	       if (userId && CAMP_DATA.length > 0) {
-	         const user = CAMP_DATA.find(u => u.id.trim() === userId.trim());
-	         if (user) {
-	           userGold = Number(user.gold || 0).toLocaleString();
-	         }
-	       }
-	       document.getElementById('shop-gold').textContent = userGold;
-	   
-	       const box = document.getElementById('shop-items');
-	       box.innerHTML = "";
-	       const goods = goodsData.filter(i => i.物品名称 && i.物品名称.trim() !== "");
-	   
-	       if (goods.length === 0) {
-	         box.innerHTML = `<div class="info-row"><span class="value">暂无商品</span></div>`;
-	       } else {
-	         goods.forEach(g => {
-	           box.innerHTML += `
-	             <div class="info-row">
-	               <span class="label">${g.物品名称}${g.单个数量 ? `(${g.单个数量})` : ''}</span>
-	               <span class="value">
-	                 <span style="color:#FF9800">${g.价格 ?? ''}</span><br>
-	                 剩余：${g.剩余数量 ?? '无'}<br>
-	                 权限：${g.兑换权限 ?? '无'}<br>
-	                 备注：${g.备注 ?? '无'}
-	               </span>
-	             </div>`;
-	         });
-	       }
-	   
-	       status.style.display = "none";
-	       info.style.display = "block";
-	   
-	     } catch (e) {
-	       console.error("商店错误：", e);
-	       status.className = "status-tip status-error";
-	       status.innerHTML = "❌ 商店加载失败，请点击重试";
-	       retryBtn.style.display = "block";
-	     } finally {
-	       isLoading = false;
-	     }
-	   }
+// ==================== 兑换商店 ====================
+async function loadShop() {
+  if (isLoading) return;
+  isLoading = true;
+
+  const status = document.getElementById('shop-status');
+  const info = document.getElementById('shop-info');
+  const retryBtn = document.getElementById('retry-shop-btn');
+
+  status.className = "status-tip status-loading";
+  status.innerHTML = '<span class="spin"></span>正在加载商品...';
+  status.style.display = "block";
+  info.style.display = "none";
+  retryBtn.style.display = "none";
+
+  try {
+    let goodsData = await fetchWithTimeout(SHOP_URL,8000);
+
+    if (!goodsData) {
+      throw new Error("shop.json 加载失败");
+    }
+
+    let userGold = "0";
+    const userId = localStorage.getItem('campUserId');
+    let targetUser = null;
+    if (userId && CAMP_DATA.length > 0) {
+      targetUser = CAMP_DATA.find(u => u.id.trim() === userId.trim());
+      if (targetUser) {
+        userGold = Number(targetUser.gold || 0).toLocaleString();
+      }
+    }
+    document.getElementById('shop-gold').textContent = userGold;
+
+    const box = document.getElementById('shop-items');
+    box.innerHTML = "";
+    const goods = goodsData.filter(i => i.name && i.name.trim() !== "");
+
+    if (goods.length === 0) {
+      box.innerHTML = `<div class="info-row"><span class="value">暂无商品</span></div>`;
+    } else {
+      goods.forEach(g => {
+        const priceUnit = g.priceUnit || "金条";
+        const stockUnit = g.stockUnit || "件";
+        const joinUnit = g.minJoinUnit || "天";
+        const itemHtml = `
+          <div class="info-row shop-item-row" style="cursor:pointer;border:1px solid #eee;margin:6px 0;padding:10px;border-radius:6px;" data-goods='${JSON.stringify(g).replaceAll("'","\\'")}'>
+            <span class="label">${g.name}</span>
+            <span class="value">
+              <span style="color:#FF9800">${g.price ?? ''}${priceUnit}</span><br>
+              剩余：${g.stock ?? '无'}${stockUnit}<br>
+              最低入营时长：${g.minJoinDay ?? 0}${joinUnit}<br>
+              最低科技点：${g.minTechPoint ?? 0}<br>
+              备注：${g.remark ?? '无'}
+            </span>
+          </div>`;
+        box.innerHTML += itemHtml;
+      });
+
+      document.querySelectorAll('.shop-item-row').forEach(row => {
+        row.onclick = function(){
+          const goodsJson = this.dataset.goods.replaceAll("\\'","'");
+          const goodsInfo = JSON.parse(goodsJson);
+          openShopDetail(goodsInfo, targetUser);
+        }
+      })
+    }
+
+    status.style.display = "none";
+    info.style.display = "block";
+
+  } catch (e) {
+    console.error("商店错误：", e);
+    status.className = "status-tip status-error";
+    status.innerHTML = "❌ 商店加载失败，请点击重试";
+    retryBtn.style.display = "block";
+  } finally {
+    isLoading = false;
+  }
+}
+
+// 商品详情弹窗函数（兼容所有自定义单位）
+function openShopDetail(g, user) {
+  const userGoldNum = user ? Number(user.gold || 0) : 0;
+  const priceNum = Number(g.price || 0);
+  const stock = g.stock ?? 0;
+  const priceUnit = g.priceUnit || "金条";
+  const stockUnit = g.stockUnit || "件";
+  const joinUnit = g.minJoinUnit || "天";
+  const meetDay = user ? Number(user.join || 0) >= g.minJoinDay : false;
+  const meetTech = user ? Number(user.realTech || 0) >= g.minTechPoint : false;
+  const canBuy = userGoldNum >= priceNum && stock > 0 && meetDay && meetTech;
+
+  let mask = document.getElementById("shop-detail-mask");
+  if(mask) mask.remove();
+
+  mask = document.createElement("div");
+  mask.id = "shop-detail-mask";
+  mask.style = `
+    position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);
+    display:flex;align-items:center;justify-content:center;z-index:9999;
+  `;
+
+  mask.innerHTML = `
+    <div style="background:#fff;width:500px;max-width:92vw;border-radius:10px;overflow:hidden;">
+      <div style="width:100%;height:240px;background:#f3f3f3;display:flex;align-items:center;justify-content:center;font-size:70px;color:#aaa;">
+        🎁
+      </div>
+      <div style="padding:20px;">
+        <h2 style="margin:0 0 8px;">${g.name}</h2>
+        <div style="font-size:22px;color:#FF9800;font-weight:bold;margin-bottom:16px;">${g.price}${priceUnit}</div>
+
+        <div style="border-top:1px solid #eee;padding-top:14px;line-height:1.8;">
+          <div>库存剩余：${stock > 0 ? stock + stockUnit : '<span style="color:red">已售罄</span>'}</div>
+          <div>兑换门槛：入营满${g.minJoinDay}${joinUnit} / 科技点≥${g.minTechPoint}</div>
+          <div>商品备注：${g.remark || '无'}</div>
+          <div style="margin-top:10px;padding:8px;background:#f8f8f8;border-radius:4px;">
+            你的金币：${userGoldNum.toLocaleString()}
+            ${!meetDay ? `<br><span style="color:red">入营时长不足</span>` : ""}
+            ${!meetTech ? `<br><span style="color:red">科技点不足</span>` : ""}
+            ${userGoldNum < priceNum ? `<br><span style="color:red">${priceUnit}不足，无法兑换</span>` : ""}
+            ${stock <= 0 ? `<br><span style="color:red">库存耗尽</span>` : ""}
+          </div>
+        </div>
+
+        <div style="margin-top:22px;display:flex;gap:10px;justify-content:flex-end;">
+          <button id="closeShopDetail" style="padding:9px 20px;border:1px solid #ccc;background:#fff;border-radius:5px;cursor:pointer;">关闭</button>
+          <button id="buyGoodsBtn" ${canBuy ? "" : "disabled style='background:#cccccc;cursor:not-allowed'"} 
+            style="padding:9px 20px;border:none;background:#007bff;color:#fff;border-radius:5px;cursor:pointer;">立即兑换
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(mask);
+
+  mask.querySelector("#closeShopDetail").onclick = () => mask.remove();
+  mask.onclick = function(e){
+    if(e.target.id === "shop-detail-mask") mask.remove();
+  }
+
+  mask.querySelector("#buyGoodsBtn").onclick = async function(){
+    if(!canBuy) return;
+    const confirmText = `确认兑换【${g.name}】？\n将扣除 ${g.price}${priceUnit}`;
+    if(!confirm(confirmText)) return;
+    alert("兑换功能待后端接口开发完成");
+    mask.remove();
+    loadShop();
+  }
+}
+
+// 重试按钮绑定
+document.getElementById('retry-shop-btn').addEventListener('click', loadShop);
 	    
 	 // ==================== 导航栏切换逻辑 ====================
 	 document.querySelectorAll('.nav-item').forEach(item => {
